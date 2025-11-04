@@ -144,6 +144,9 @@ I2C-Scanner/
 ├── I2C_Scanner/
 │   └── I2C_Scanner.ino    # Основной файл программы / Main program file
 ├── README.md               # Документация / Documentation
+├── CHANGELOG.md            # История изменений / Changelog
+├── LICENSE                 # Лицензия MIT / MIT License
+├── VERSION                 # Версия проекта / Project version
 └── .gitignore             # Игнорируемые файлы Git / Git ignored files
 ```
 
