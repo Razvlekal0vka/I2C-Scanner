@@ -21,12 +21,25 @@ I2C Scanner is a tool for scanning and detecting I2C devices connected to ESP32-
 
 ### Поддерживаемые устройства / Supported Devices
 
+#### I2C устройства (обнаруживаются сканером) / I2C Devices (detected by scanner)
+
 - **MPU-6050** - Гироскоп и акселерометр (0x68, 0x69) / Gyroscope and accelerometer (0x68, 0x69)
 - **LIS3DSH** - Трехосевой акселерометр (0x18, 0x19) / 3-axis accelerometer (0x18, 0x19)
 - **DS1307** - Модуль часов реального времени (0x48) / Real-time clock module (0x48)
 - **EEPROM 24C32** - Энергонезависимая память (0x50) / Non-volatile memory (0x50)
 - **BMP280** - Датчик давления и температуры (0x76, 0x77) / Pressure and temperature sensor (0x76, 0x77)
-- **OLED SSD1306** - OLED дисплей (0x3C, 0x3D) / OLED display (0x3C, 0x3D)
+- **OLED SSD1306** - OLED дисплей I2C (0x3C, 0x3D) / OLED display I2C (0x3C, 0x3D)
+
+#### ⚠️ SPI устройства (НЕ обнаруживаются I2C сканером) / SPI Devices (NOT detected by I2C scanner)
+
+**Важно:** Этот сканер работает только с I2C устройствами! Устройства с интерфейсом SPI (CS, DC, RES пины) не могут быть обнаружены.
+
+**Important:** This scanner works only with I2C devices! Devices with SPI interface (CS, DC, RES pins) cannot be detected.
+
+К SPI устройствам относятся / SPI devices include:
+- Дисплеи 80x160, 240x240, 320x240 пикселей (ST7735, ILI9341, ST7789) / Displays 80x160, 240x240, 320x240 pixels (ST7735, ILI9341, ST7789)
+- Дисплеи с пинами CS, DC, RES, BLK / Displays with CS, DC, RES, BLK pins
+- Для работы требуют библиотеки Adafruit_GFX, Adafruit_ST7735 и т.д. / Require Adafruit_GFX, Adafruit_ST7735 libraries, etc.
 
 ## Требования / Requirements
 
@@ -170,6 +183,92 @@ I2C-Scanner/
 4. **Проверьте подтягивающие резисторы** / **Check pull-up resistors:**
    - I2C шина требует подтягивающих резисторов 4.7 кОм на SDA и SCL / I2C bus requires 4.7 kΩ pull-up resistors on SDA and SCL
    - Многие модули имеют встроенные резисторы / Many modules have built-in resistors
+
+### ⚠️ Устройство не обнаружено, но имеет пины CS, DC, RES / Device Not Detected but Has CS, DC, RES Pins
+
+**Проблема:** Если ваше устройство имеет пины CS (Chip Select), DC (Data/Command), RES (Reset), BLK (Backlight), то это **SPI устройство**, а не I2C!
+
+**Problem:** If your device has CS (Chip Select), DC (Data/Command), RES (Reset), BLK (Backlight) pins, then it's a **SPI device**, not I2C!
+
+**Решение / Solution:**
+
+1. **Это нормально!** I2C сканер не может обнаружить SPI устройства, так как это разные протоколы связи.
+   - I2C использует 2 линии (SDA, SCL)
+   - SPI использует минимум 4 линии (MOSI, SCK, CS, DC) + опционально RES, BLK
+
+2. **Для работы с SPI дисплеем 80x160:**
+   - Используйте библиотеки: `Adafruit_GFX` и `Adafruit_ST7735` (или `Adafruit_ST7789` для ST7789)
+   - Подключение для ESP32-C3:
+     ```
+     Дисплей    ESP32-C3
+     ───────    ────────
+     VCC    →   3.3V
+     GND    →   GND
+     SCL    →   GPIO10 (SCK)
+     SDA    →   GPIO11 (MOSI)
+     RES    →   GPIO12
+     DC     →   GPIO13
+     CS     →   GPIO14
+     BLK    →   GPIO15 (или через резистор к 3.3V)
+     ```
+
+3. **Пример кода для SPI дисплея:**
+   ```cpp
+   #include <Adafruit_GFX.h>
+   #include <Adafruit_ST7735.h>
+   
+   #define TFT_CS    14
+   #define TFT_RST   12
+   #define TFT_DC    13
+   Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
+   
+   void setup() {
+     tft.initR(INITR_BLACKTAB);
+     tft.fillScreen(ST77XX_BLACK);
+     tft.setTextColor(ST77XX_WHITE);
+     tft.setTextSize(2);
+     tft.println("Hello!");
+   }
+   ```
+
+**1. This is normal!** I2C scanner cannot detect SPI devices, as they are different communication protocols.
+   - I2C uses 2 lines (SDA, SCL)
+   - SPI uses at least 4 lines (MOSI, SCK, CS, DC) + optionally RES, BLK
+
+**2. To work with 80x160 SPI display:**
+   - Use libraries: `Adafruit_GFX` and `Adafruit_ST7735` (or `Adafruit_ST7789` for ST7789)
+   - Connection for ESP32-C3:
+     ```
+     Display    ESP32-C3
+     ───────    ────────
+     VCC    →   3.3V
+     GND    →   GND
+     SCL    →   GPIO10 (SCK)
+     SDA    →   GPIO11 (MOSI)
+     RES    →   GPIO12
+     DC     →   GPIO13
+     CS     →   GPIO14
+     BLK    →   GPIO15 (or through resistor to 3.3V)
+     ```
+
+**3. Example code for SPI display:**
+   ```cpp
+   #include <Adafruit_GFX.h>
+   #include <Adafruit_ST7735.h>
+   
+   #define TFT_CS    14
+   #define TFT_RST   12
+   #define TFT_DC    13
+   Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
+   
+   void setup() {
+     tft.initR(INITR_BLACKTAB);
+     tft.fillScreen(ST77XX_BLACK);
+     tft.setTextColor(ST77XX_WHITE);
+     tft.setTextSize(2);
+     tft.println("Hello!");
+   }
+   ```
 
 ### Ошибки компиляции / Compilation Errors
 

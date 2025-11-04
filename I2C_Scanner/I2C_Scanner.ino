@@ -165,11 +165,21 @@ void setup() {
   if (found == 0) {
     Serial.println("❌ Устройства не найдены!");
     Serial.println("\n🔧 Возможные причины:");
-    Serial.println("• SDA/SCL подключены неправильно (SDA→GPIO8, SCL→GPIO9)");
+    Serial.println("• SDA/SCL подключены неправильно (SDA→GPIO4, SCL→GPIO5)");
     Serial.println("• Нет общего GND между платами");
     Serial.println("• Устройства не получают питание (3.3V для ESP32-C3)");
     Serial.println("• Плохое качество соединений");
     Serial.println("• Устройства повреждены");
+    Serial.println("\n⚠️  ВАЖНО: Это I2C сканер!");
+    Serial.println("   Устройства с интерфейсом SPI (CS, DC, RES пины)");
+    Serial.println("   не могут быть обнаружены I2C сканером!");
+    Serial.println("   SPI дисплеи (80x160, ST7735, ILI9341 и т.д.)");
+    Serial.println("   требуют отдельной библиотеки для работы.");
+    Serial.println("\n⚠️  IMPORTANT: This is I2C scanner!");
+    Serial.println("   Devices with SPI interface (CS, DC, RES pins)");
+    Serial.println("   cannot be detected by I2C scanner!");
+    Serial.println("   SPI displays (80x160, ST7735, ILI9341, etc.)");
+    Serial.println("   require separate library to work.");
   } else {
     Serial.print("✅ Найдено устройств: ");
     Serial.println(found);
@@ -179,6 +189,7 @@ void setup() {
   }
   
   Serial.println("\n=== Справочник устройств ===");
+  Serial.println("I2C устройства (обнаруживаются этим сканером):");
   Serial.println("0x68 - MPU-6050 (по умолчанию)");
   Serial.println("0x69 - MPU-6050 (если ADO к VCC)");
   Serial.println("0x18 - LIS3DSH (если SDO/SA0 к GND)");
@@ -187,8 +198,28 @@ void setup() {
   Serial.println("0x50 - EEPROM 24C32");
   Serial.println("0x76 - BMP280");
   Serial.println("0x77 - BMP280");
-  Serial.println("0x3C - OLED SSD1306");
-  Serial.println("0x3D - OLED SSD1306");
+  Serial.println("0x3C - OLED SSD1306 (I2C)");
+  Serial.println("0x3D - OLED SSD1306 (I2C)");
+  Serial.println("\n⚠️  SPI устройства (НЕ обнаруживаются I2C сканером):");
+  Serial.println("   • Дисплеи 80x160, 240x240, 320x240 (ST7735, ILI9341)");
+  Serial.println("   • Дисплеи с пинами CS, DC, RES, BLK");
+  Serial.println("   • Требуют библиотеки Adafruit_GFX, Adafruit_ST7735 и т.д.");
+  Serial.println("\n=== Device Reference ===");
+  Serial.println("I2C devices (detected by this scanner):");
+  Serial.println("0x68 - MPU-6050 (default)");
+  Serial.println("0x69 - MPU-6050 (if ADO to VCC)");
+  Serial.println("0x18 - LIS3DSH (if SDO/SA0 to GND)");
+  Serial.println("0x19 - LIS3DSH (if SDO/SA0 to VCC)");
+  Serial.println("0x48 - DS1307 (RTC)");
+  Serial.println("0x50 - EEPROM 24C32");
+  Serial.println("0x76 - BMP280");
+  Serial.println("0x77 - BMP280");
+  Serial.println("0x3C - OLED SSD1306 (I2C)");
+  Serial.println("0x3D - OLED SSD1306 (I2C)");
+  Serial.println("\n⚠️  SPI devices (NOT detected by I2C scanner):");
+  Serial.println("   • Displays 80x160, 240x240, 320x240 (ST7735, ILI9341)");
+  Serial.println("   • Displays with CS, DC, RES, BLK pins");
+  Serial.println("   • Require Adafruit_GFX, Adafruit_ST7735 libraries, etc.");
   
   Serial.println("\n🔄 Перезапустите для повторного сканирования");
 }
