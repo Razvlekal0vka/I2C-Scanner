@@ -198,19 +198,24 @@ I2C-Scanner/
 
 2. **Для работы с SPI дисплеем 80x160:**
    - Используйте библиотеки: `Adafruit_GFX` и `Adafruit_ST7735` (или `Adafruit_ST7789` для ST7789)
-   - Подключение для ESP32-C3:
+   - **Подключение для ESP32-C3 (7-8 проводов):**
      ```
-     Дисплей    ESP32-C3
-     ───────    ────────
-     VCC    →   3.3V
-     GND    →   GND
-     SCL    →   GPIO10 (SCK)
-     SDA    →   GPIO11 (MOSI)
-     RES    →   GPIO12
-     DC     →   GPIO13
-     CS     →   GPIO14
-     BLK    →   GPIO15 (или через резистор к 3.3V)
+     Дисплей    ESP32-C3              Назначение / Purpose
+     ───────    ────────              ────────────────────
+     VCC    →   3.3V                  Питание / Power
+     GND    →   GND                   Земля / Ground
+     SCL    →   GPIO10 (SCK)          SPI Clock / SPI тактовая частота
+     SDA    →   GPIO11 (MOSI)         SPI Data / SPI данные
+     RES    →   GPIO12                Reset / Сброс
+     DC     →   GPIO13                Data/Command / Данные/Команда
+     CS     →   GPIO14                Chip Select / Выбор чипа
+     BLK    →   GPIO15 (опционально)  Backlight / Подсветка
+              или → 3.3V (через резистор 100-220 Ом)
      ```
+   
+   **Минимальное подключение: 7 проводов** (BLK можно подключить напрямую к 3.3V через резистор)
+   
+   **Полное подключение: 8 проводов** (BLK управляется через GPIO для регулировки яркости)
 
 3. **Пример кода для SPI дисплея:**
    ```cpp
@@ -237,19 +242,24 @@ I2C-Scanner/
 
 **2. To work with 80x160 SPI display:**
    - Use libraries: `Adafruit_GFX` and `Adafruit_ST7735` (or `Adafruit_ST7789` for ST7789)
-   - Connection for ESP32-C3:
+   - **Connection for ESP32-C3 (7-8 wires):**
      ```
-     Display    ESP32-C3
-     ───────    ────────
-     VCC    →   3.3V
-     GND    →   GND
-     SCL    →   GPIO10 (SCK)
-     SDA    →   GPIO11 (MOSI)
-     RES    →   GPIO12
-     DC     →   GPIO13
-     CS     →   GPIO14
-     BLK    →   GPIO15 (or through resistor to 3.3V)
+     Display    ESP32-C3              Purpose / Назначение
+     ───────    ────────              ────────────────────
+     VCC    →   3.3V                  Power / Питание
+     GND    →   GND                   Ground / Земля
+     SCL    →   GPIO10 (SCK)          SPI Clock / SPI тактовая частота
+     SDA    →   GPIO11 (MOSI)         SPI Data / SPI данные
+     RES    →   GPIO12                Reset / Сброс
+     DC     →   GPIO13                Data/Command / Данные/Команда
+     CS     →   GPIO14                Chip Select / Выбор чипа
+     BLK    →   GPIO15 (optional)     Backlight / Подсветка
+              or → 3.3V (through 100-220Ω resistor)
      ```
+   
+   **Minimum connection: 7 wires** (BLK can be connected directly to 3.3V through resistor)
+   
+   **Full connection: 8 wires** (BLK controlled via GPIO for brightness adjustment)
 
 **3. Example code for SPI display:**
    ```cpp
