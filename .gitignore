@@ -1,0 +1,35 @@
+# Arduino IDE generated files / Файлы, созданные Arduino IDE
+*.hex
+*.eep
+*.elf
+*.bin
+*.map
+*.sym
+
+# Build directories / Директории сборки
+build/
+.build/
+
+# IDE files / Файлы IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS files / Файлы ОС
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files / Временные файлы
+*.tmp
+*.bak
+*.swp
+*~
+
+# Logs / Логи
+*.log
+
+# Arduino CLI / Arduino CLI
+*.arduino/
+
